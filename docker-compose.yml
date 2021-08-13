@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/music-bot-client
+    ports:
+      - 3000:80
