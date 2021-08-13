@@ -10,3 +10,9 @@ services:
       - ./:/music-bot-client
     ports:
       - 3000:80
+  localtunnel:
+    container_name: localtunnel-client 
+    image: node:14.16.0-alpine3.13
+    command: npx localtunnel --port 80 --subdomain ing-music --local-host client
+    depends_on:
+      - client
