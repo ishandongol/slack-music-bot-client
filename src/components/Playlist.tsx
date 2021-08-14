@@ -5,18 +5,7 @@ import ReactPlayer from "react-player";
 import { getPlaylist } from "../api";
 import { useSocket } from "../hooks/useSocket";
 import { Badge } from "./Badge";
-
-export interface Song {
-  user: string;
-  _id: {
-    $oid: string;
-  };
-  thumbnail_url: string;
-  url: string;
-  title: string;
-  description: string;
-  status: "pending" | "playing" | "played";
-}
+import { Song, SongItem } from "./Song";
 
 export const Playlist = () => {
   const { socketConnected, socketId, socketRef, emitterRef } = useSocket();
@@ -96,7 +85,6 @@ export const Playlist = () => {
             setPlaying(false);
           }}
           pip
-          controls
           onProgress={({ playedSeconds }) => {
             setCurrentSong({ ...currentSong, playedSeconds });
           }}
@@ -121,7 +109,7 @@ export const Playlist = () => {
         className="flex-shrink-0 col-sm-3 overflow-auto"
         style={{ height: "100vh" }}
       >
-        <h3 className="text-center p-4 text-white bg-dark mb-1">
+        <h3 className="text-center p-4 text-white bg-black mb-1 sticky-top">
           Innovate PLaylist
         </h3>
         <ul className="list-group list-group-flush">
@@ -130,82 +118,23 @@ export const Playlist = () => {
             const nextSong = currentSong.index + 1;
             const nextSongIndex = nextSong === playlist.length ? 0 : nextSong;
             return (
-              <li
+              <SongItem
+                className={`${isCurrent ? "bg-black" : "bg-dark"}`}
                 key={song._id?.$oid}
                 onClick={(e) => {
                   e.preventDefault();
-                  setCurrentSong({ ...song, index });
-                  setPlaying(true);
+                  if (!isCurrent) {
+                    setCurrentSong({ ...song, index });
+                    setPlaying(true);
+                  }
                 }}
-                className={`list-group-item p-0 text-white px-5 py-2 mb-2 ${
-                  isCurrent ? "bg-black" : "bg-dark"
-                }`}
-                style={{
-                  cursor: "pointer",
-                }}
-              >
-                <div className=" d-flex">
-                  <div
-                    className="flex-shrink-0 d-flex"
-                    style={{ width: "20%" }}
-                  >
-                    <div className="align-self-center">
-                      <img
-                        src={song.thumbnail_url}
-                        className="img-fluid"
-                        alt={song.title}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex-grow-1 py-2 px-3">
-                    <p className="mb-1">{song.title || song.url}</p>
-                    <p className="text-muted">{song.description}</p>
-                    <div className="d-flex">
-                      {isCurrent && playing && (
-                        <>
-                          <Badge
-                            className="align-self-center bg-success"
-                            title="Playing"
-                          />
-                          <Badge
-                            className="align-self-center bg-light text-dark"
-                            title={`${progress} %`}
-                          />
-                        </>
-                      )}
-                      {isCurrent && !playing && (
-                        <Badge
-                          className="align-self-center bg-danger"
-                          title="Paused"
-                        />
-                      )}
-                      {nextSongIndex === index && (
-                        <>
-                          <Badge
-                            className="align-self-center bg-warning text-dark"
-                            title="Up Next"
-                          />
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                {isCurrent && (
-                  <div
-                    className="progress bg-dark mt-2"
-                    style={{ height: "4px" }}
-                  >
-                    <div
-                      className="progress-bar bg-danger"
-                      role="progressbar"
-                      style={{ width: `${progress}%` }}
-                      aria-valuenow={progress}
-                      aria-valuemin={0}
-                      aria-valuemax={duration}
-                    />
-                  </div>
-                )}
-              </li>
+                song={song}
+                isCurrent={isCurrent}
+                playing={playing}
+                isNextSong={nextSongIndex === index}
+                duration={duration || 0}
+                progress={progress}
+              />
             );
           })}
         </ul>

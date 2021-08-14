@@ -1,8 +1,8 @@
 @import "bootstrap";
 
-.fixed-top-custom {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1030;
+.position-absolute-custom {
+  position: absolute !important;
+  left: 0;
+  bottom: 0;
+  width: 50%;
 }
