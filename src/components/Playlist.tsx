@@ -73,7 +73,7 @@ export const Playlist = () => {
       ? Math.round((playedSeconds / duration) * 100)
       : 0;
   return (
-    <div className="overflow-hidden d-flex">
+    <div className="overflow-hidden d-flex bg-black">
       <div className="flex-grow-1 col">
         <ReactPlayer
           url={currentSong.url}
@@ -101,70 +101,63 @@ export const Playlist = () => {
         />
       </div>
       <div
-        className="flex-shrink-0 col-sm-3 overflow-scroll"
+        className="flex-shrink-0 col-sm-4 overflow-auto"
         style={{ height: "100vh" }}
       >
-        <div className="card">
-          <div className="card-header h4 pb-3">Inovate Playlist</div>
-          <ul className="list-group list-group-flush border-0">
-            {playlist.map((song, index) => {
-              const isCurrent = currentSong._id?.$oid === song._id?.$oid;
-              return (
-                <li
-                  key={song._id?.$oid}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentSong({ ...song, index });
-                  }}
-                  className={`list-group-item p-0 ${
-                    isCurrent ? "bg-light" : ""
-                  }`}
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  <div className=" d-flex">
-                    <div
-                      className="flex-shrink-0 ps-2 d-flex"
-                      style={{ width: "15%" }}
-                    >
-                      <div className="align-self-center">
-                        <img
-                          src="https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png"
-                          className="img-fluid"
-                          alt="..."
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-grow-1 text-truncate py-2 px-3">
-                      <p>{song.title || song.url}</p>
-                      <p className="text-muted">
-                        {song.description || song.url}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 px-2 d-flex justify-content-center">
-                      {isCurrent && (
-                        <Badge className="align-self-center" title="Playing" />
-                      )}
-                    </div>
-                  </div>
-                  {isCurrent && (
-                    <div className="progress bg-dark" style={{ height: "4px" }}>
-                      <div
-                        className="progress-bar bg-danger"
-                        role="progressbar"
-                        style={{ width: `${progress}%` }}
-                        aria-valuenow={progress}
-                        aria-valuemin={0}
-                        aria-valuemax={duration}
+        <h3 className="text-center p-4 text-white bg-dark mb-1">
+          Innovate PLaylist
+        </h3>
+        <ul className="list-group list-group-flush border-0">
+          {playlist.map((song, index) => {
+            const isCurrent = currentSong._id?.$oid === song._id?.$oid;
+            return (
+              <li
+                key={song._id?.$oid}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentSong({ ...song, index });
+                }}
+                className={`list-group-item p-0 text-white px-5 py-2 mb-2 ${
+                  isCurrent ? "bg-dark" : "bg-black"
+                }`}
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                <div className=" d-flex">
+                  <div
+                    className="flex-shrink-0 ps-2 d-flex"
+                    style={{ width: "15%" }}
+                  >
+                    <div className="align-self-center">
+                      <img
+                        src="https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png"
+                        className="img-fluid"
+                        alt="..."
                       />
                     </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+                  </div>
+                  <div className="flex-grow-1 text-truncate py-2 px-3">
+                    <p className="mb-1">{song.title || song.url}</p>
+                    <p className="text-muted">{song.description || song.url}</p>
+                  </div>
+                </div>
+                {isCurrent && (
+                  <div className="progress bg-black" style={{ height: "4px" }}>
+                    <div
+                      className="progress-bar bg-danger"
+                      role="progressbar"
+                      style={{ width: `${progress}%` }}
+                      aria-valuenow={progress}
+                      aria-valuemin={0}
+                      aria-valuemax={duration}
+                    />
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
