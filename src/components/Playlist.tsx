@@ -2,12 +2,15 @@ import { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import ReactPlayer from "react-player";
+import { getPlaylist } from "../api";
 import { useSocket } from "../hooks/useSocket";
 import { Badge } from "./Badge";
 
 export interface Song {
   user: string;
-  _id: string;
+  _id: {
+    $oid: string;
+  };
   url: string;
   title: string;
   description: string;
@@ -15,10 +18,12 @@ export interface Song {
 }
 
 export const Playlist = () => {
-  const { socketConnected, socketId, socketRef } = useSocket();
+  const { socketConnected, socketId, socketRef, emitterRef } = useSocket();
   const [playlist, setPlayList] = useState<Song[]>([]);
   const [currentSong, setCurrentSong] = useState<Song & { index: number }>({
-    _id: "",
+    _id: {
+      $oid: "",
+    },
     user: "",
     url: "",
     status: "pending",
@@ -34,10 +39,31 @@ export const Playlist = () => {
   );
   useEffect(() => {
     const socket = socketRef?.current;
-    if (socketConnected && socket) {
+    const emitter = emitterRef?.current;
+    const onNewSong = (data: string) => {
+      const json: Song = JSON.parse(data);
+      appendToPlaylist(json);
+    };
+    if (socketConnected && socket && socketId && emitter) {
+      console.log("all done");
+      emitter.on("newSong", onNewSong);
     }
-    return () => {};
-  }, [socketId, socketConnected, socketRef, appendToPlaylist]);
+    return () => {
+      console.log("Clear");
+      emitter?.removeListener("newSong", onNewSong);
+    };
+  }, [socketId, socketConnected, socketRef, emitterRef, appendToPlaylist]);
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      try {
+        const playlist = await getPlaylist();
+        setPlayList(playlist);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchPlaylist();
+  }, []);
   return (
     <div className="container-fluid overflow-hidden">
       <div className="row p-0">
@@ -64,10 +90,10 @@ export const Playlist = () => {
             <div className="card-header h5">Innovate Playlist</div>
             <ul className="list-group list-group-flush">
               {playlist.map((song, index) => {
-                const isCurrent = currentSong._id === song._id;
+                const isCurrent = currentSong._id?.$oid === song._id?.$oid;
                 return (
                   <li
-                    key={song._id}
+                    key={song._id?.$oid}
                     onClick={(e) => {
                       e.preventDefault();
                       setCurrentSong({ ...song, index });
