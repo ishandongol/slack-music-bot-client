@@ -3,5 +3,5 @@ export interface BadgeProps {
   className?: string;
 }
 export const Badge = ({ title, className = "" }: BadgeProps) => {
-  return <span className={`badge bg-success ${className}`}>{title}</span>;
+  return <span className={`badge mt-1 me-2 ${className}`}>{title}</span>;
 };

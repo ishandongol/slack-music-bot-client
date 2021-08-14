@@ -11,6 +11,7 @@ export interface Song {
   _id: {
     $oid: string;
   };
+  thumbnail_url: string;
   url: string;
   title: string;
   description: string;
@@ -20,7 +21,7 @@ export interface Song {
 export const Playlist = () => {
   const { socketConnected, socketId, socketRef, emitterRef } = useSocket();
   const [playlist, setPlayList] = useState<Song[]>([]);
-
+  const [playing, setPlaying] = useState<boolean>(false);
   const [currentSong, setCurrentSong] = useState<
     Song & { index: number; duration?: number; playedSeconds?: number }
   >({
@@ -29,6 +30,7 @@ export const Playlist = () => {
     },
     user: "",
     url: "",
+    thumbnail_url: "",
     status: "pending",
     title: "",
     description: "",
@@ -67,17 +69,32 @@ export const Playlist = () => {
     };
     fetchPlaylist();
   }, []);
+
+  useEffect(() => {
+    if (playlist.length && !playing && !currentSong.url) {
+      setCurrentSong({ ...currentSong, ...playlist[0], index: 0 });
+    }
+  }, [playlist, playing, currentSong]);
   const { playedSeconds, duration } = currentSong;
   const progress =
     playedSeconds && duration
       ? Math.round((playedSeconds / duration) * 100)
       : 0;
   return (
-    <div className="overflow-hidden d-flex bg-black">
+    <div className="overflow-hidden d-flex bg-dark">
       <div className="flex-grow-1 col">
         <ReactPlayer
           url={currentSong.url}
-          playing={currentSong.url ? true : false}
+          playing={playing}
+          onStart={() => {
+            setPlaying(true);
+          }}
+          onPlay={() => {
+            setPlaying(true);
+          }}
+          onPause={() => {
+            setPlaying(false);
+          }}
           pip
           controls
           onProgress={({ playedSeconds }) => {
@@ -101,24 +118,27 @@ export const Playlist = () => {
         />
       </div>
       <div
-        className="flex-shrink-0 col-sm-4 overflow-auto"
+        className="flex-shrink-0 col-sm-3 overflow-auto"
         style={{ height: "100vh" }}
       >
         <h3 className="text-center p-4 text-white bg-dark mb-1">
           Innovate PLaylist
         </h3>
-        <ul className="list-group list-group-flush border-0">
+        <ul className="list-group list-group-flush">
           {playlist.map((song, index) => {
             const isCurrent = currentSong._id?.$oid === song._id?.$oid;
+            const nextSong = currentSong.index + 1;
+            const nextSongIndex = nextSong === playlist.length ? 0 : nextSong;
             return (
               <li
                 key={song._id?.$oid}
                 onClick={(e) => {
                   e.preventDefault();
                   setCurrentSong({ ...song, index });
+                  setPlaying(true);
                 }}
                 className={`list-group-item p-0 text-white px-5 py-2 mb-2 ${
-                  isCurrent ? "bg-dark" : "bg-black"
+                  isCurrent ? "bg-black" : "bg-dark"
                 }`}
                 style={{
                   cursor: "pointer",
@@ -126,24 +146,55 @@ export const Playlist = () => {
               >
                 <div className=" d-flex">
                   <div
-                    className="flex-shrink-0 ps-2 d-flex"
-                    style={{ width: "15%" }}
+                    className="flex-shrink-0 d-flex"
+                    style={{ width: "20%" }}
                   >
                     <div className="align-self-center">
                       <img
-                        src="https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png"
+                        src={song.thumbnail_url}
                         className="img-fluid"
-                        alt="..."
+                        alt={song.title}
                       />
                     </div>
                   </div>
-                  <div className="flex-grow-1 text-truncate py-2 px-3">
+                  <div className="flex-grow-1 py-2 px-3">
                     <p className="mb-1">{song.title || song.url}</p>
-                    <p className="text-muted">{song.description || song.url}</p>
+                    <p className="text-muted">{song.description}</p>
+                    <div className="d-flex">
+                      {isCurrent && playing && (
+                        <>
+                          <Badge
+                            className="align-self-center bg-success"
+                            title="Playing"
+                          />
+                          <Badge
+                            className="align-self-center bg-light text-dark"
+                            title={`${progress} %`}
+                          />
+                        </>
+                      )}
+                      {isCurrent && !playing && (
+                        <Badge
+                          className="align-self-center bg-danger"
+                          title="Paused"
+                        />
+                      )}
+                      {nextSongIndex === index && (
+                        <>
+                          <Badge
+                            className="align-self-center bg-warning text-dark"
+                            title="Up Next"
+                          />
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 {isCurrent && (
-                  <div className="progress bg-black" style={{ height: "4px" }}>
+                  <div
+                    className="progress bg-dark mt-2"
+                    style={{ height: "4px" }}
+                  >
                     <div
                       className="progress-bar bg-danger"
                       role="progressbar"
