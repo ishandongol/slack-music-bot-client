@@ -1,4 +1,4 @@
-import { Playlist } from "./components/playlist";
+import { Playlist } from "./components/Playlist";
 
 function App() {
   return <Playlist />;

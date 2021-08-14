@@ -7,7 +7,7 @@ import config from "./config";
 import "./assets/sass/main.scss";
 ReactDOM.render(
   <React.StrictMode>
-    <SocketProvider url={config.baseUrl}>
+    <SocketProvider url={config.webSocketUrl}>
       <App />
     </SocketProvider>
   </React.StrictMode>,

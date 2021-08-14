@@ -34,20 +34,9 @@ export const Playlist = () => {
   );
   useEffect(() => {
     const socket = socketRef?.current;
-    if (socketConnected && socketId && socket) {
-      socket.on("welcome", (data) => {
-        console.log("welcome");
-        setPlayList(data);
-      });
-      socket.on("newSongAdded", (data) => {
-        console.log("newSongAdded");
-        appendToPlaylist(data);
-      });
+    if (socketConnected && socket) {
     }
-    return () => {
-      socket?.off("welcome");
-      socket?.off("newSongAdded");
-    };
+    return () => {};
   }, [socketId, socketConnected, socketRef, appendToPlaylist]);
   return (
     <div className="container-fluid overflow-hidden">
