@@ -20,7 +20,10 @@ export interface Song {
 export const Playlist = () => {
   const { socketConnected, socketId, socketRef, emitterRef } = useSocket();
   const [playlist, setPlayList] = useState<Song[]>([]);
-  const [currentSong, setCurrentSong] = useState<Song & { index: number }>({
+
+  const [currentSong, setCurrentSong] = useState<
+    Song & { index: number; duration?: number; playedSeconds?: number }
+  >({
     _id: {
       $oid: "",
     },
@@ -64,49 +67,65 @@ export const Playlist = () => {
     };
     fetchPlaylist();
   }, []);
+  const { playedSeconds, duration } = currentSong;
+  const progress =
+    playedSeconds && duration
+      ? Math.round((playedSeconds / duration) * 100)
+      : 0;
   return (
-    <div className="container-fluid overflow-hidden">
-      <div className="row p-0">
-        <div className="col p-0">
-          <ReactPlayer
-            url={currentSong.url}
-            playing={currentSong.url ? true : false}
-            onEnded={() => {
-              if (playlist.length) {
-                const nextIndex = currentSong.index + 1;
-                if (nextIndex === playlist.length) {
-                  setCurrentSong({ ...playlist[0], index: 0 });
-                } else {
-                  setCurrentSong({ ...playlist[nextIndex], index: nextIndex });
-                }
+    <div className="overflow-hidden d-flex">
+      <div className="flex-grow-1 col">
+        <ReactPlayer
+          url={currentSong.url}
+          playing={currentSong.url ? true : false}
+          pip
+          controls
+          onProgress={({ playedSeconds }) => {
+            setCurrentSong({ ...currentSong, playedSeconds });
+          }}
+          onDuration={(duration) => {
+            setCurrentSong({ ...currentSong, duration });
+          }}
+          onEnded={() => {
+            if (playlist.length) {
+              const nextIndex = currentSong.index + 1;
+              if (nextIndex === playlist.length) {
+                setCurrentSong({ ...playlist[0], index: 0 });
+              } else {
+                setCurrentSong({ ...playlist[nextIndex], index: nextIndex });
               }
-            }}
-            width={"100%"}
-            height={"100vh"}
-          />
-        </div>
-        <div className="col-md-4 p-0">
-          <div className="card">
-            <div className="card-header h5">Innovate Playlist</div>
-            <ul className="list-group list-group-flush">
-              {playlist.map((song, index) => {
-                const isCurrent = currentSong._id?.$oid === song._id?.$oid;
-                return (
-                  <li
-                    key={song._id?.$oid}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentSong({ ...song, index });
-                    }}
-                    className={`list-group-item d-flex px-lg-5 ${
-                      isCurrent ? "bg-dark" : ""
-                    }`}
-                    style={{
-                      cursor: "pointer",
-                    }}
-                  >
+            }
+          }}
+          width={"100%"}
+          height={"100vh"}
+        />
+      </div>
+      <div
+        className="flex-shrink-0 col-sm-3 overflow-scroll"
+        style={{ height: "100vh" }}
+      >
+        <div className="card">
+          <div className="card-header h4 pb-3">Inovate Playlist</div>
+          <ul className="list-group list-group-flush border-0">
+            {playlist.map((song, index) => {
+              const isCurrent = currentSong._id?.$oid === song._id?.$oid;
+              return (
+                <li
+                  key={song._id?.$oid}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentSong({ ...song, index });
+                  }}
+                  className={`list-group-item p-0 ${
+                    isCurrent ? "bg-light" : ""
+                  }`}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <div className=" d-flex">
                     <div
-                      className="flex-shrink-0 pe-3 d-flex"
+                      className="flex-shrink-0 ps-2 d-flex"
                       style={{ width: "15%" }}
                     >
                       <div className="align-self-center">
@@ -117,27 +136,34 @@ export const Playlist = () => {
                         />
                       </div>
                     </div>
-                    <div className="flex-grow-1 text-truncate">
-                      <p className={`${isCurrent ? "text-white" : ""}`}>
-                        {song.title || song.url}
-                      </p>
+                    <div className="flex-grow-1 text-truncate py-2 px-3">
+                      <p>{song.title || song.url}</p>
                       <p className="text-muted">
                         {song.description || song.url}
                       </p>
                     </div>
-                    <div className="flex-grow-1 ps-3 d-flex justify-content-center">
+                    <div className="flex-shrink-0 px-2 d-flex justify-content-center">
                       {isCurrent && (
-                        <Badge
-                          className="align-self-center"
-                          title="Now Playing"
-                        />
+                        <Badge className="align-self-center" title="Playing" />
                       )}
                     </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                  </div>
+                  {isCurrent && (
+                    <div className="progress bg-dark" style={{ height: "4px" }}>
+                      <div
+                        className="progress-bar bg-danger"
+                        role="progressbar"
+                        style={{ width: `${progress}%` }}
+                        aria-valuenow={progress}
+                        aria-valuemin={0}
+                        aria-valuemax={duration}
+                      />
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </div>
