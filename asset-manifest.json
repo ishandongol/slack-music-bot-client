@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/slack-music-bot-client/static/css/main.6b25fad3.chunk.css",
-    "main.js": "/slack-music-bot-client/static/js/main.14a44a52.chunk.js",
-    "main.js.map": "/slack-music-bot-client/static/js/main.14a44a52.chunk.js.map",
-    "runtime-main.js": "/slack-music-bot-client/static/js/runtime-main.a061856a.js",
-    "runtime-main.js.map": "/slack-music-bot-client/static/js/runtime-main.a061856a.js.map",
-    "static/js/2.87fb704d.chunk.js": "/slack-music-bot-client/static/js/2.87fb704d.chunk.js",
-    "static/js/2.87fb704d.chunk.js.map": "/slack-music-bot-client/static/js/2.87fb704d.chunk.js.map",
-    "static/js/3.370eda51.chunk.js": "/slack-music-bot-client/static/js/3.370eda51.chunk.js",
-    "static/js/3.370eda51.chunk.js.map": "/slack-music-bot-client/static/js/3.370eda51.chunk.js.map",
+    "main.css": "/slack-music-bot-client/static/css/main.c548d594.chunk.css",
+    "main.js": "/slack-music-bot-client/static/js/main.e77610a5.chunk.js",
+    "main.js.map": "/slack-music-bot-client/static/js/main.e77610a5.chunk.js.map",
+    "runtime-main.js": "/slack-music-bot-client/static/js/runtime-main.9724d176.js",
+    "runtime-main.js.map": "/slack-music-bot-client/static/js/runtime-main.9724d176.js.map",
+    "static/js/2.58f36520.chunk.js": "/slack-music-bot-client/static/js/2.58f36520.chunk.js",
+    "static/js/2.58f36520.chunk.js.map": "/slack-music-bot-client/static/js/2.58f36520.chunk.js.map",
+    "static/js/3.20e0cf48.chunk.js": "/slack-music-bot-client/static/js/3.20e0cf48.chunk.js",
+    "static/js/3.20e0cf48.chunk.js.map": "/slack-music-bot-client/static/js/3.20e0cf48.chunk.js.map",
     "index.html": "/slack-music-bot-client/index.html",
-    "static/css/main.6b25fad3.chunk.css.map": "/slack-music-bot-client/static/css/main.6b25fad3.chunk.css.map",
-    "static/js/2.87fb704d.chunk.js.LICENSE.txt": "/slack-music-bot-client/static/js/2.87fb704d.chunk.js.LICENSE.txt"
+    "static/css/main.c548d594.chunk.css.map": "/slack-music-bot-client/static/css/main.c548d594.chunk.css.map",
+    "static/js/2.58f36520.chunk.js.LICENSE.txt": "/slack-music-bot-client/static/js/2.58f36520.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.a061856a.js",
-    "static/js/2.87fb704d.chunk.js",
-    "static/css/main.6b25fad3.chunk.css",
-    "static/js/main.14a44a52.chunk.js"
+    "static/js/runtime-main.9724d176.js",
+    "static/js/2.58f36520.chunk.js",
+    "static/css/main.c548d594.chunk.css",
+    "static/js/main.e77610a5.chunk.js"
   ]
 }
