@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/slack-music-bot-client/static/css/main.75b1bfa9.chunk.css",
-    "main.js": "/slack-music-bot-client/static/js/main.94587b3d.chunk.js",
-    "main.js.map": "/slack-music-bot-client/static/js/main.94587b3d.chunk.js.map",
+    "main.js": "/slack-music-bot-client/static/js/main.c5d64749.chunk.js",
+    "main.js.map": "/slack-music-bot-client/static/js/main.c5d64749.chunk.js.map",
     "runtime-main.js": "/slack-music-bot-client/static/js/runtime-main.c7703f41.js",
     "runtime-main.js.map": "/slack-music-bot-client/static/js/runtime-main.c7703f41.js.map",
     "static/js/2.7202286a.chunk.js": "/slack-music-bot-client/static/js/2.7202286a.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.c7703f41.js",
     "static/js/2.7202286a.chunk.js",
     "static/css/main.75b1bfa9.chunk.css",
-    "static/js/main.94587b3d.chunk.js"
+    "static/js/main.c5d64749.chunk.js"
   ]
 }
