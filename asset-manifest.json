@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/slack-music-bot-client/static/css/main.75b1bfa9.chunk.css",
-    "main.js": "/slack-music-bot-client/static/js/main.9b8f3690.chunk.js",
-    "main.js.map": "/slack-music-bot-client/static/js/main.9b8f3690.chunk.js.map",
-    "runtime-main.js": "/slack-music-bot-client/static/js/runtime-main.9724d176.js",
-    "runtime-main.js.map": "/slack-music-bot-client/static/js/runtime-main.9724d176.js.map",
-    "static/js/2.bc1ba44a.chunk.js": "/slack-music-bot-client/static/js/2.bc1ba44a.chunk.js",
-    "static/js/2.bc1ba44a.chunk.js.map": "/slack-music-bot-client/static/js/2.bc1ba44a.chunk.js.map",
-    "static/js/3.20e0cf48.chunk.js": "/slack-music-bot-client/static/js/3.20e0cf48.chunk.js",
-    "static/js/3.20e0cf48.chunk.js.map": "/slack-music-bot-client/static/js/3.20e0cf48.chunk.js.map",
+    "main.js": "/slack-music-bot-client/static/js/main.014a2808.chunk.js",
+    "main.js.map": "/slack-music-bot-client/static/js/main.014a2808.chunk.js.map",
+    "runtime-main.js": "/slack-music-bot-client/static/js/runtime-main.c7703f41.js",
+    "runtime-main.js.map": "/slack-music-bot-client/static/js/runtime-main.c7703f41.js.map",
+    "static/js/2.7202286a.chunk.js": "/slack-music-bot-client/static/js/2.7202286a.chunk.js",
+    "static/js/2.7202286a.chunk.js.map": "/slack-music-bot-client/static/js/2.7202286a.chunk.js.map",
+    "static/js/3.268b35e7.chunk.js": "/slack-music-bot-client/static/js/3.268b35e7.chunk.js",
+    "static/js/3.268b35e7.chunk.js.map": "/slack-music-bot-client/static/js/3.268b35e7.chunk.js.map",
     "index.html": "/slack-music-bot-client/index.html",
     "static/css/main.75b1bfa9.chunk.css.map": "/slack-music-bot-client/static/css/main.75b1bfa9.chunk.css.map",
-    "static/js/2.bc1ba44a.chunk.js.LICENSE.txt": "/slack-music-bot-client/static/js/2.bc1ba44a.chunk.js.LICENSE.txt"
+    "static/js/2.7202286a.chunk.js.LICENSE.txt": "/slack-music-bot-client/static/js/2.7202286a.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.9724d176.js",
-    "static/js/2.bc1ba44a.chunk.js",
+    "static/js/runtime-main.c7703f41.js",
+    "static/js/2.7202286a.chunk.js",
     "static/css/main.75b1bfa9.chunk.css",
-    "static/js/main.9b8f3690.chunk.js"
+    "static/js/main.014a2808.chunk.js"
   ]
 }
