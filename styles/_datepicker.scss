@@ -2,7 +2,7 @@
 
 // Will edit everything selected including everything between a range of dates
 .CalendarDay__selected_span {
-  background: $secondary; //background
+  background: $primary; //background
   color: $light; //text
   border: 1px solid $border-color; //default styles include a border
 }
@@ -28,7 +28,7 @@
 }
 
 .CalendarDay__selected_span:hover {
-  background-color: $primary;
+  background-color: $dark;
   border-color: $light;
 }
 .DateRangePicker {
