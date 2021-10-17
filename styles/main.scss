@@ -1,9 +1,9 @@
-$dark:#05010C;
-$primary:#B64CCD;
-$secondary: #4F4F4F;
 
+@import "./variables";
 @import 'bootstrap';
 @import './datepicker';
+@import './scrollbar';
+
 @import 'https://fonts.googleapis.com/css2?family=Poppins&display=swap';
 
 body,html{
@@ -11,7 +11,6 @@ body,html{
   background-color: $dark;
 }
 
-$navbar-height: 55.79px;
 .position-absolute-custom {
   position: absolute !important;
   left: 0;
@@ -20,7 +19,7 @@ $navbar-height: 55.79px;
 }
 .max-height-no-margin {
   position: relative;
-  height: calc(100vh - #{$navbar-height});
+  height: calc(100vh - #{$navbar-height} - 10px) !important;
 }
 .max-height {
   margin-top: $navbar-height;

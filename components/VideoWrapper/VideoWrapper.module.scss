@@ -1,4 +1,7 @@
+
+@import "../../styles/variables";
+
 .video_player {
-    height: 100%;
+   height: calc(100vh - #{$navbar-height} - 10px)
   }
   

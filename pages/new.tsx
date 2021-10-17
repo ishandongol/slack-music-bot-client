@@ -16,6 +16,7 @@ import moment from "moment";
 import { AxiosError } from "../utils/axios";
 import { Navbar } from "../components/Navbar";
 import { Meta } from "../components/Meta";
+import { MainLayout } from "../layouts/MainLayout";
 
 interface VideoPlayPauseEventPayload extends VideoSeekEventPayload {
   playing: string;
@@ -32,7 +33,7 @@ interface PendingEvent {
   playing?: boolean;
 }
 
-const Playlist: NextPage = () => {
+const PlaylistNew: NextPage = () => {
   const {
     socketConnected,
     socketId,
@@ -150,7 +151,7 @@ const Playlist: NextPage = () => {
     setCurrentSongPlayingInfo({
       [nextSongId]: {
         playedSeconds: 0,
-        duration: currentInfo.duration,
+        duration: currentInfo?.duration,
       },
     });
   };
@@ -375,161 +376,152 @@ const Playlist: NextPage = () => {
       : 0;
   const { startDate, endDate } = startDateAndEndDate;
 
-  if (error) {
-    return (
-      <div className="max-height bg-dark d-flex align-items-center text-light justify-content-center w-full">
-        {error.message || "Oops! Something went wrong"}
-      </div>
-    );
-  }
-  if (loading && !playlist.length) {
-    return (
-      <div className="max-height bg-dark d-flex align-items-center justify-content-center w-full">
-        <Spinner />
-      </div>
-    );
-  }
   return (
     <>
       <Meta />
-      <Navbar />
-      <div className="overflow-hidden d-flex bg-dark">
-        <div className="flex-grow-1 col max-height-no-margin">
-          {!canControl && (
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                zIndex: 1,
-                position: "absolute",
+      <MainLayout noScroll>
+        <Navbar />
+        <div className="container-fluid bg-dark">
+            <div className="row">
+          <div className="col-sm-12 col-md-4 max-height-no-margin overflow-scroll">
+            {canControl ? (
+              <DatePicker
+                startDate={startDate}
+                startDateId="startDate"
+                endDate={endDate}
+                endDateId="endDate"
+                onDatesChange={({ startDate, endDate }) => {
+                  setStartDateAndEndDate({
+                    startDate: startDate?.startOf("day") || null,
+                    endDate: endDate?.endOf("day") || null,
+                  });
+                }}
+              />
+            ) : (
+              <div className="text-light p-4 text-center">
+                {moment(startDate).format("dddd, MMM D")}
+                <span className="px-4">to</span>
+                {moment(endDate).format("dddd, MMM D")}
+              </div>
+            )}
+            {loading && (
+              <div
+                className="d-flex align-items-center justify-content-center p-2"
+                style={{ width: "100%" }}
+              >
+                <Spinner />
+              </div>
+            )}
+            <ul className="list-group list-group-flush overflow-auto pb-5">
+              {playlist?.map((song, index) => {
+                const isCurrent = currentSong._id?.$oid === song._id?.$oid;
+                const nextSong = currentSong.index + 1;
+                const nextSongIndex =
+                  nextSong === playlist.length ? 0 : nextSong;
+                return (
+                  <SongItem
+                    className={`${isCurrent ? "bg-secondary" : "bg-dark"}`}
+                    key={song._id?.$oid}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!isCurrent && canControl) {
+                        setCurrentSong({ ...song, index });
+                        setPlaying(true);
+                        if (currentSong.url === song.url) {
+                          copyDuration(song._id.$oid);
+                          setNextSameSong(true);
+                        }
+                      }
+                    }}
+                    song={song}
+                    isCurrent={isCurrent}
+                    playing={playing}
+                    isNextSong={nextSongIndex === index}
+                    duration={duration || 0}
+                    progress={progress}
+                  />
+                );
+              })}
+            </ul>
+          </div>
+          <div className="col-sm-12 col-md-8">
+            {!canControl && (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  zIndex: 1,
+                  position: "absolute",
+                }}
+              />
+            )}
+            <ReactPlayer
+              ref={playerRef}
+              url={currentSong.url}
+              playing={playing}
+              controls={process.env.NODE_ENV === "development"}
+              onReady={() => {
+                setVideoReady({ [currentSong._id.$oid]: { ready: true } });
               }}
-            />
-          )}
-          <ReactPlayer
-            ref={playerRef}
-            url={currentSong.url}
-            playing={playing}
-            controls={process.env.NODE_ENV === "development"}
-            onReady={() => {
-              setVideoReady({ [currentSong._id.$oid]: { ready: true } });
-            }}
-            onStart={() => {
-              sendPlayPauseMessage(true);
-              setPlaying(true);
-            }}
-            onPlay={() => {
-              sendPlayPauseMessage(true);
-              setPlaying(true);
-            }}
-            onPause={() => {
-              sendPlayPauseMessage(false);
-              setPlaying(false);
-            }}
-            pip
-            onSeek={(seconds) => {
-              if (canControl) {
-                sendSeekMessage(seconds);
-              }
-            }}
-            onProgress={({ playedSeconds }) => {
-              const currentSongId = currentSong._id.$oid;
-              const currentInfo = currentSongPlayingInfo[currentSongId];
-              setCurrentSongPlayingInfo({
-                [currentSongId]: { ...currentInfo, playedSeconds },
-              });
-              debouncedSeekRef.current.sendSeekMessage(playedSeconds);
-            }}
-            onDuration={(duration) => {
-              const currentSongId = currentSong._id.$oid;
-              const currentInfo = currentSongPlayingInfo[currentSongId];
-              setCurrentSongPlayingInfo({
-                [currentSongId]: {
-                  ...currentInfo,
-                  duration,
-                },
-              });
-            }}
-            onEnded={() => {
-              if (playlist.length) {
-                const nextIndex = currentSong.index + 1;
-                const nextSong =
-                  nextIndex === playlist.length
-                    ? { ...playlist[0], index: 0 }
-                    : { ...playlist[nextIndex], index: nextIndex };
-                setCurrentSong(nextSong);
-                if (currentSong.url === nextSong.url) {
-                  copyDuration(nextSong._id.$oid);
-                  setNextSameSong(true);
+              onStart={() => {
+                sendPlayPauseMessage(true);
+                setPlaying(true);
+              }}
+              onPlay={() => {
+                sendPlayPauseMessage(true);
+                setPlaying(true);
+              }}
+              onPause={() => {
+                sendPlayPauseMessage(false);
+                setPlaying(false);
+              }}
+              pip
+              onSeek={(seconds) => {
+                if (canControl) {
+                  sendSeekMessage(seconds);
                 }
-              }
-            }}
-            width={"100%"}
-            wrapper={VideoWrapper}
-          />
-        </div>
-        <div className="flex-shrink-0 col-sm-4 max-height-no-margin">
-          {canControl ? (
-            <DatePicker
-              startDate={startDate}
-              startDateId="startDate"
-              endDate={endDate}
-              endDateId="endDate"
-              onDatesChange={({ startDate, endDate }) => {
-                setStartDateAndEndDate({
-                  startDate: startDate?.startOf("day") || null,
-                  endDate: endDate?.endOf("day") || null,
+              }}
+              onProgress={({ playedSeconds }) => {
+                const currentSongId = currentSong._id.$oid;
+                const currentInfo = currentSongPlayingInfo[currentSongId];
+                setCurrentSongPlayingInfo({
+                  [currentSongId]: { ...currentInfo, playedSeconds },
+                });
+                debouncedSeekRef.current.sendSeekMessage(playedSeconds);
+              }}
+              onDuration={(duration) => {
+                const currentSongId = currentSong._id.$oid;
+                const currentInfo = currentSongPlayingInfo[currentSongId];
+                setCurrentSongPlayingInfo({
+                  [currentSongId]: {
+                    ...currentInfo,
+                    duration,
+                  },
                 });
               }}
+              onEnded={() => {
+                if (playlist.length) {
+                  const nextIndex = currentSong.index + 1;
+                  const nextSong =
+                    nextIndex === playlist.length
+                      ? { ...playlist[0], index: 0 }
+                      : { ...playlist[nextIndex], index: nextIndex };
+                  setCurrentSong(nextSong);
+                  if (currentSong.url === nextSong.url) {
+                    copyDuration(nextSong._id.$oid);
+                    setNextSameSong(true);
+                  }
+                }
+              }}
+              width={"100%"}
+              wrapper={VideoWrapper}
             />
-          ) : (
-            <div className="text-light p-4 text-center">
-              {moment(startDate).format("dddd, MMM D")}
-              <span className="px-4">to</span>
-              {moment(endDate).format("dddd, MMM D")}
-            </div>
-          )}
-          {loading && (
-            <div
-              className="d-flex align-items-center justify-content-center p-2"
-              style={{ width: "100%" }}
-            >
-              <Spinner />
-            </div>
-          )}
-          <ul className="list-group list-group-flush overflow-auto max-height-no-margin pb-5">
-            {playlist?.map((song, index) => {
-              const isCurrent = currentSong._id?.$oid === song._id?.$oid;
-              const nextSong = currentSong.index + 1;
-              const nextSongIndex = nextSong === playlist.length ? 0 : nextSong;
-              return (
-                <SongItem
-                  className={`${isCurrent ? "bg-secondary" : "bg-dark"}`}
-                  key={song._id?.$oid}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (!isCurrent && canControl) {
-                      setCurrentSong({ ...song, index });
-                      setPlaying(true);
-                      if (currentSong.url === song.url) {
-                        copyDuration(song._id.$oid);
-                        setNextSameSong(true);
-                      }
-                    }
-                  }}
-                  song={song}
-                  isCurrent={isCurrent}
-                  playing={playing}
-                  isNextSong={nextSongIndex === index}
-                  duration={duration || 0}
-                  progress={progress}
-                />
-              );
-            })}
-          </ul>
-        </div>
-      </div>
+          </div>
+          </div>
+          </div>
+      </MainLayout>
     </>
   );
 };
 
-export default Playlist;
+export default PlaylistNew;

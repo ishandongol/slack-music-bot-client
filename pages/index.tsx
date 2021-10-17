@@ -35,7 +35,7 @@ const Home: NextPage = () => {
               <Button
                 onClick={(e) => {
                   e.preventDefault();
-                  push("/playlist");
+                  push("/new");
                 }}
               >
                 Start the party
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
                 variant="outlined"
                 onClick={(e) => {
                   e.preventDefault();
-                  push("/playlist");
+                  push("/new");
                 }}
                 className="ms-4"
               >

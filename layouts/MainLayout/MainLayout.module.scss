@@ -1,8 +1,18 @@
 
+@import "bootstrap/scss/bootstrap-utilities";
+
 .main_layout {
     height: 100vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
+
+.no_scroll {
+    overflow-y: hidden;
+}
+
 .contents{
-    padding: 0 8rem;
+    padding: 0 1.25rem;
+    @include media-breakpoint-up(md) { 
+        padding: 0 8rem;
+     }
 }

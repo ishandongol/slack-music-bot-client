@@ -3,6 +3,7 @@ import config from "../config";
 import { useSocket } from "../hooks/useSocket";
 import { Switch } from "./Switch";
 import Link from 'next/link'
+import { BrandImage } from "./BrandImage";
 export const Navbar = () => {
   const {
     socketConnected,
@@ -32,11 +33,11 @@ export const Navbar = () => {
     }
   }, [isSyncMode, socketRef, socketConnected, socketId]);
   return (
-    <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <Link href="/">
           <a className="navbar-brand" >
-          {config.appName}
+          <BrandImage size="small" alt={config.appName}/>
           </a>
         </Link>
         <button
