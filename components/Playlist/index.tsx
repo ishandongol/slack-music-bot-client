@@ -1,13 +1,9 @@
-import type { Song } from "../Song"
-import { Typography } from "../Typography"
+import styles from './Playlist.module.scss'
 
-export interface PlaylistProps {
-    songs: Song[]
-}
-export const Playlist = () => {
+export const Playlist:React.FC<{className?:string}> = ({children,className = ''}) => {
     return(
-        <>
-        <Typography as="p" variant="body">Playlist for Today</Typography>
-        </>
+        <div className={`${styles.playlist} bg-secondary p-4 ${className}`}>
+        {children}
+        </div>
     )
 }

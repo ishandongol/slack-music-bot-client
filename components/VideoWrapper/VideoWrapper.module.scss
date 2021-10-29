@@ -2,6 +2,8 @@
 @import "../../styles/variables";
 
 .video_player {
-   height: calc(100vh - #{$navbar-height} - 10px)
+   height: 25vh;
+   border-radius: 8px;
+   clip-path: border-box;
   }
   
