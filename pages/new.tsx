@@ -446,6 +446,8 @@ const PlaylistNew: NextPage = () => {
                     <HorizontalCard
                       key={song._id?.$oid}
                       title={song.title}
+                      isCurrent={isCurrent}
+                      isNext={nextSongIndex === index}
                       subTitle={song.description}
                       image={song.thumbnail_url}
                       onClick={() => {

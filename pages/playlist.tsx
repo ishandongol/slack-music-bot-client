@@ -9,7 +9,7 @@ import { getPlaylist } from "../api";
 import { useSocket } from "../hooks/useSocket";
 import { Song, SongItem } from "../components/Song";
 import { Spinner } from "../components/Spinner";
-import { VideoWrapper } from "../components/VideoWrapper";
+import { VideoWrapperClassic } from "../components/VideoWrapper";
 import debounce from "lodash/debounce";
 import { DatePicker, StartDateAndEndDate } from "../components/DatePicker";
 import moment from "moment";
@@ -464,7 +464,7 @@ const Playlist: NextPage = () => {
               }
             }}
             width={"100%"}
-            wrapper={VideoWrapper}
+            wrapper={VideoWrapperClassic}
           />
         </div>
         <div className="flex-shrink-0 col-sm-4 max-height-no-margin">

@@ -38,17 +38,17 @@ const Home: NextPage = () => {
                   push("/new");
                 }}
               >
-                Start the party
+                Version 2
               </Button>
               <Button
                 variant="outlined"
                 onClick={(e) => {
                   e.preventDefault();
-                  push("/new");
+                  push("/playlist");
                 }}
                 className="ms-4"
               >
-                Join the party
+                Classic
               </Button>
             </div>
           </div>

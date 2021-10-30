@@ -39,18 +39,24 @@ export const Card = (props: CardProps) => {
   );
 };
 
-export const HorizontalCard = (props: CardProps) => {
-  const { title, subTitle, image,onClick } = props;
+interface HorizontalCardProps extends CardProps {
+  isNext?:boolean
+  isCurrent?:boolean
+}
+export const HorizontalCard = (props: HorizontalCardProps) => {
+  const { title, subTitle, image,onClick,isNext,isCurrent } = props;
 
   return (
-    <div className={`card mb-3 ${styles.card} ${styles.horizontal}`} onClick={onClick}>
+    <div className={`card mb-3 ${styles.card} ${styles.horizontal} position-relative`} onClick={onClick}>
+      {isNext && <span className={`badge position-absolute bg-primary ${styles.badge}`} >Up Next</span>}
+      {isCurrent && <span className={`badge position-absolute bg-success ${styles.badge}`} >Playing</span>}
       <div className="row g-0 ">
         <div className="col-md-4 ">
           <img src={image} className="img-fluid rounded-start" alt={title} />
         </div>
         <div className="col-md-8">
           <div className="card-body">
-            <p className={`card-text ${styles.card_title} mb-2`}>{title}</p>
+            <p className={`card-text ${styles.card_title} my-3`}>{title}</p>
             <p className={`card-text ${styles.card_subtitle} text-gray`}>
               {subTitle}
             </p>
