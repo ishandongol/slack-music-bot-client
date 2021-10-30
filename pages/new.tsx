@@ -5,21 +5,21 @@ import { useRef } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import ReactPlayer from "react-player";
-import { getPlaylist } from "../api";
+import { getPlaylist, getSongs } from "../api";
 import { useSocket } from "../hooks/useSocket";
-import { Song, SongItem } from "../components/Song";
+import { Song } from "../components/Song";
 import { Spinner } from "../components/Spinner";
 import { VideoWrapper } from "../components/VideoWrapper";
 import debounce from "lodash/debounce";
-import { DatePicker, StartDateAndEndDate } from "../components/DatePicker";
+import  type { StartDateAndEndDate } from "../components/DatePicker";
 import moment from "moment";
 import { AxiosError } from "../utils/axios";
-import { Navbar } from "../components/Navbar";
 import { Meta } from "../components/Meta";
 import { MainLayout } from "../layouts/MainLayout";
 import { PageTitle } from "../components/v2/PageTitle";
 import { Playlist } from "../components/Playlist";
-import { HorizontalCard } from "../components/v2/Card";
+import { Card, HorizontalCard } from "../components/v2/Card";
+import { HomeNavbar } from "../components/HomeNavbar";
 
 interface VideoPlayPauseEventPayload extends VideoSeekEventPayload {
   playing: string;
@@ -49,12 +49,14 @@ const PlaylistNew: NextPage = () => {
   } = useSocket();
 
   const [playlist, setPlayList] = useState<Song[]>([]);
+  const [songs, setSongs] = useState<Song[]>([]);
 
   const [playing, setPlaying] = useState<boolean>(false);
 
   const [error, setError] = useState<AxiosError | undefined>();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingSongs, setLoadingSongs] = useState<boolean>(false);
 
   const [nextSameSong, setNextSameSong] = useState<boolean>(false);
 
@@ -358,6 +360,23 @@ const PlaylistNew: NextPage = () => {
     }
   }, [startDateAndEndDate]);
 
+  const fetchSongs = useCallback(async () => {
+    const { startDate, endDate } = startDateAndEndDate;
+    try {
+      setLoadingSongs(true);
+      const songs = await getSongs<Song[]>({});
+      setSongs(songs || []);
+    } catch (err) {
+      setError(err as any);
+    } finally {
+      setLoadingSongs(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSongs();
+  }, [fetchSongs]);
+
   useEffect(() => {
     fetchPlaylist();
     notifyDateChange();
@@ -383,13 +402,11 @@ const PlaylistNew: NextPage = () => {
     <>
       <Meta />
       <MainLayout noScroll>
-        <Navbar />
-        <div className="container-fluid ">
+        <HomeNavbar />
+        <div className="container-fluid">
           <div className="row">
-            <div className="col-sm-12 col-md-4 max-height-no-margin d-flex flex-column">
-              <PageTitle className="text-light">Playlist for today</PageTitle>
-              <Playlist className={"overflow-auto mb-3"}>
-              {canControl ? (
+            <div className="col-sm-12 col-md-4 max-height d-flex flex-column">
+              {/* {canControl ? (
                 <DatePicker
                   startDate={startDate}
                   startDateId="startDate"
@@ -408,15 +425,18 @@ const PlaylistNew: NextPage = () => {
                   <span className="px-4">to</span>
                   {moment(endDate).format("dddd, MMM D")}
                 </div>
-              )}
-              {loading && (
-                <div
-                  className="d-flex align-items-center justify-content-center p-2"
-                  style={{ width: "100%" }}
-                >
-                  <Spinner />
-                </div>
-              )}
+              )} */}
+              <PageTitle className="text-light">Playlist for today</PageTitle>
+
+              <Playlist className={"overflow-auto mb-3"}>
+                {loading && (
+                  <div
+                    className="d-flex align-items-center justify-content-center p-2"
+                    style={{ width: "100%" }}
+                  >
+                    <Spinner />
+                  </div>
+                )}
                 {playlist?.map((song, index) => {
                   const isCurrent = currentSong._id?.$oid === song._id?.$oid;
                   const nextSong = currentSong.index + 1;
@@ -428,6 +448,16 @@ const PlaylistNew: NextPage = () => {
                       title={song.title}
                       subTitle={song.description}
                       image={song.thumbnail_url}
+                      onClick={() => {
+                        if (!isCurrent && canControl) {
+                          setCurrentSong({ ...song, index });
+                          setPlaying(true);
+                          if (currentSong.url === song.url) {
+                            copyDuration(song._id.$oid);
+                            setNextSameSong(true);
+                          }
+                        }
+                      }}
                     />
                     // <SongItem
                     //   className={`${isCurrent ? "bg-secondary" : "bg-dark"}`}
@@ -453,82 +483,105 @@ const PlaylistNew: NextPage = () => {
                   );
                 })}
               </Playlist>
-              <div className="flex-shrink-0">
-              {!canControl && (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    zIndex: 1,
-                    position: "absolute",
+              <div className="flex-shrink-0 mt-auto">
+                {!canControl && (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      zIndex: 1,
+                      position: "absolute",
+                    }}
+                  />
+                )}
+                <ReactPlayer
+                  ref={playerRef}
+                  url={currentSong.url}
+                  playing={playing}
+                  // controls={process.env.NODE_ENV === "development"}
+                  onReady={() => {
+                    setVideoReady({ [currentSong._id.$oid]: { ready: true } });
                   }}
-                />
-              )}
-              <ReactPlayer
-                ref={playerRef}
-                url={currentSong.url}
-                playing={playing}
-                controls={process.env.NODE_ENV === "development"}
-                onReady={() => {
-                  setVideoReady({ [currentSong._id.$oid]: { ready: true } });
-                }}
-                onStart={() => {
-                  sendPlayPauseMessage(true);
-                  setPlaying(true);
-                }}
-                onPlay={() => {
-                  sendPlayPauseMessage(true);
-                  setPlaying(true);
-                }}
-                onPause={() => {
-                  sendPlayPauseMessage(false);
-                  setPlaying(false);
-                }}
-                pip
-                onSeek={(seconds) => {
-                  if (canControl) {
-                    sendSeekMessage(seconds);
-                  }
-                }}
-                onProgress={({ playedSeconds }) => {
-                  const currentSongId = currentSong._id.$oid;
-                  const currentInfo = currentSongPlayingInfo[currentSongId];
-                  setCurrentSongPlayingInfo({
-                    [currentSongId]: { ...currentInfo, playedSeconds },
-                  });
-                  debouncedSeekRef.current.sendSeekMessage(playedSeconds);
-                }}
-                onDuration={(duration) => {
-                  const currentSongId = currentSong._id.$oid;
-                  const currentInfo = currentSongPlayingInfo[currentSongId];
-                  setCurrentSongPlayingInfo({
-                    [currentSongId]: {
-                      ...currentInfo,
-                      duration,
-                    },
-                  });
-                }}
-                onEnded={() => {
-                  if (playlist.length) {
-                    const nextIndex = currentSong.index + 1;
-                    const nextSong =
-                      nextIndex === playlist.length
-                        ? { ...playlist[0], index: 0 }
-                        : { ...playlist[nextIndex], index: nextIndex };
-                    setCurrentSong(nextSong);
-                    if (currentSong.url === nextSong.url) {
-                      copyDuration(nextSong._id.$oid);
-                      setNextSameSong(true);
+                  onStart={() => {
+                    sendPlayPauseMessage(true);
+                    setPlaying(true);
+                  }}
+                  onPlay={() => {
+                    sendPlayPauseMessage(true);
+                    setPlaying(true);
+                  }}
+                  onPause={() => {
+                    sendPlayPauseMessage(false);
+                    setPlaying(false);
+                  }}
+                  pip
+                  onSeek={(seconds) => {
+                    if (canControl) {
+                      sendSeekMessage(seconds);
                     }
-                  }
-                }}
-                width={"100%"}
-                wrapper={VideoWrapper}
-              />
+                  }}
+                  onProgress={({ playedSeconds }) => {
+                    const currentSongId = currentSong._id.$oid;
+                    const currentInfo = currentSongPlayingInfo[currentSongId];
+                    setCurrentSongPlayingInfo({
+                      [currentSongId]: { ...currentInfo, playedSeconds },
+                    });
+                    debouncedSeekRef.current.sendSeekMessage(playedSeconds);
+                  }}
+                  onDuration={(duration) => {
+                    const currentSongId = currentSong._id.$oid;
+                    const currentInfo = currentSongPlayingInfo[currentSongId];
+                    setCurrentSongPlayingInfo({
+                      [currentSongId]: {
+                        ...currentInfo,
+                        duration,
+                      },
+                    });
+                  }}
+                  onEnded={() => {
+                    if (playlist.length) {
+                      const nextIndex = currentSong.index + 1;
+                      const nextSong =
+                        nextIndex === playlist.length
+                          ? { ...playlist[0], index: 0 }
+                          : { ...playlist[nextIndex], index: nextIndex };
+                      setCurrentSong(nextSong);
+                      if (currentSong.url === nextSong.url) {
+                        copyDuration(nextSong._id.$oid);
+                        setNextSameSong(true);
+                      }
+                    }
+                  }}
+                  width={"100%"}
+                  wrapper={VideoWrapper}
+                />
               </div>
             </div>
             <div className="col-sm-12 col-md-8">
-              
+            <PageTitle className="text-light">Recently Played</PageTitle>
+              <div className="container-fluid overflow-auto max-height-no-margin">
+
+            {loadingSongs && (
+                  <div
+                    className="d-flex align-items-center justify-content-center p-2"
+                    style={{ width: "100%" }}
+                  >
+                    <Spinner />
+                  </div>
+                )}
+                <div className="row">
+                  {songs.map((song) => (
+                    <div key={song._id.$oid} className="col-md-3">
+                      <Card
+                      onAddClick={!playlist.find((playlistSong) => playlistSong._id.$oid === song._id.$oid ) ? () => setPlayList((prev) => [...prev,song]):undefined}
+                        title={song.title}
+                        subTitle={song.description}
+                        image={song.thumbnail_url}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,27 +1,28 @@
-$radius: 8px;
+@import "../../../styles/variables";
 
-.image{
-    border-radius: $radius $radius 0 0;
-    width: 100%;
+.image {
+  border-radius: $radius $radius 0 0;
+  width: 100%;
 }
-.card{
-    border-radius: $radius;
-    border: 0;
-    cursor: pointer;
-    margin-bottom: 1.25rem;
-    .horizontal{
-        height: 22.88px;
-    }
-    &_title{
-        display: block;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 18px;
-    }
-    &_subtitle{
-        display: block;
-        font-weight: 300;
-        font-size: 12px;
-        line-height: 18px;
-    }
+.card {
+  border-radius: $radius;
+  border: 0;
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+  .horizontal {
+    height: 22.88px;
+  }
+  &_title {
+    display: block;
+    font-weight: 500;
+    font-size: 14px;
+    @extend %ellipsis;
+  }
+  &_subtitle {
+    display: block;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 18px;
+    @extend %ellipsis;
+  }
 }

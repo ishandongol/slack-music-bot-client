@@ -19,9 +19,9 @@ body,html{
 }
 .max-height-no-margin {
   position: relative;
-  height: calc(100vh - #{$navbar-height} - 10px) !important;
+  height: calc(100vh - #{$navbar-height} - 75px) !important;
 }
 .max-height {
-  margin-top: $navbar-height;
-  @extend .max-height-no-margin;
+  position: relative;
+  height: calc(100vh - #{$navbar-height} - 30px) !important;
 }

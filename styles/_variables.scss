@@ -6,3 +6,12 @@ $navbar-height: 55.79px;
 
 $card-bg: $secondary;
 $card-color: white;
+
+%ellipsis{
+    line-height: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+$radius: 8px;
