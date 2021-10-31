@@ -427,9 +427,7 @@ const PlaylistNew: NextPage = () => {
                 </div>
               )} */}
               <PageTitle className="text-light">Playlist for today</PageTitle>
-
-              <Playlist className={"overflow-auto mb-3"}>
-                {loading && (
+              {loading && (
                   <div
                     className="d-flex align-items-center justify-content-center p-2"
                     style={{ width: "100%" }}
@@ -437,6 +435,7 @@ const PlaylistNew: NextPage = () => {
                     <Spinner />
                   </div>
                 )}
+{playlist.length > 0 &&               <Playlist className={"overflow-auto mb-3"}>
                 {playlist?.map((song, index) => {
                   const isCurrent = currentSong._id?.$oid === song._id?.$oid;
                   const nextSong = currentSong.index + 1;
@@ -484,7 +483,7 @@ const PlaylistNew: NextPage = () => {
                     // />
                   );
                 })}
-              </Playlist>
+              </Playlist>}
               <div className="flex-shrink-0 mt-auto">
                 {!canControl && (
                   <div

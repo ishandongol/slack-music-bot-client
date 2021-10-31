@@ -38,7 +38,7 @@ const Home: NextPage = () => {
                   push("/new");
                 }}
               >
-                Version 2
+                Version 2 (Beta)
               </Button>
               <Button
                 variant="outlined"
