@@ -13,3 +13,7 @@
 - Give one user master access
   - Can play/pause for all connected user
 - Remove song from playlist
+
+## Mock
+
+https://www.figma.com/file/9uOy0cNNVpmpn4peG9L3Ij/Musical-Playground?node-id=76%3A2
