@@ -26,6 +26,10 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_WS_URL: ${{ secrets.NEXT_PUBLIC_WS_URL }}
+          NEXT_PUBLIC_NAME: ${{ secrets.NEXT_PUBLIC_NAME }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
           BRANCH: gh-pages # The branch the action should deploy to.
           REPOSITORY_NAME: ${{github.repository}}
           FOLDER: out # The folder the action should deploy.
